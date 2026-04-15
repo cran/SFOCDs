@@ -2,7 +2,7 @@
 % Please edit documentation in R/Maxpro_Criterion.R
 \name{Maxpro_Criterion}
 \alias{Maxpro_Criterion}
-\title{Maxpro Criterion}
+\title{Maxpro Criterion for Treatment vs Position}
 \usage{
 Maxpro_Criterion(design)
 }
@@ -13,7 +13,9 @@ Maxpro_Criterion(design)
 Maxpro criterion value for a given design
 }
 \description{
-Maxpro Criterion
+User input should be the original design and this function
+automatically convert the design in treatment vs position 2D array and then
+print the Maxpro Criterion value.
 }
 \examples{
 library(SFOCDs)
