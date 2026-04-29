@@ -1,7 +1,7 @@
 
 #' Treatment Position Vs Treatment Scatter Plot
 #'
-#' @param design Input a design in matrix format
+#' @param design Input a design (base or reshuffled) in matrix format
 #'@description
 #'The function will give the scatter plot showing the spread offered by design points in the experimental space. The x axis of the plot represent treatments and y axis the position of treatments in each block. Different colors in the dot represent the blocks.
 #'@importFrom graphics axis
@@ -19,7 +19,9 @@
 #' 6,  3,  4,  1),nrow=6,byrow=TRUE)
 #' MaxDot(mat)
 MaxDot<-function(design){
+
   mat<-as.matrix(design)
+  #mat<-rearrange_backtrack(mat)
   final_mat<-NULL
   for(i in 1:nrow(mat)){
     for(j in 1:ncol(mat)){

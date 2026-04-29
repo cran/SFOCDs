@@ -7,7 +7,7 @@
 MaxDot(design)
 }
 \arguments{
-\item{design}{Input a design in matrix format}
+\item{design}{Input a design (base or reshuffled) in matrix format}
 }
 \value{
 Generates scatter plot of treatment position Vs treatment

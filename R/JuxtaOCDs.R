@@ -34,7 +34,10 @@
 #' 6,11,15,18,20,21),nrow=7,byrow=TRUE)
 #' JuxtaOCDs(mat1)
 JuxtaOCDs<-function(design){
+
+  #########Rearrange end
   design<-as.matrix(design)
+  #design<-reshuffle_pos_balance(design)
   block <- nrow(design)
   trt <- max(design)
   mat=design

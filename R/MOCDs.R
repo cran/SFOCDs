@@ -25,8 +25,11 @@
 #' MOCDs(mat)
 #' @export
 MOCDs<-function(design){
-  # the input complentary design
+
+  ####incidence matrix
   design<-as.matrix(design)
+  #design<-rearrange_backtrack(design)
+  # the input complentary design
   #####incidence matrix
   k=ncol(design)
   block <- nrow(design)
@@ -67,6 +70,7 @@ MOCDs<-function(design){
 
   L_del <- L[-(nrow(L)-1), ]
 
+
   # Number of treatments (v) and blocks (b)
 
   b <- ncol(L)
@@ -86,10 +90,11 @@ MOCDs<-function(design){
   #print("Matrix after deleting rows with no zeros:")
   #print(m2)
   m <- ifelse(m2 == 0, -1, m2)
-  col_pairs <- combn(ncol(m), 2, simplify = FALSE)
-  mpair <- do.call(cbind, lapply(col_pairs, function(pair) {
-    m[, pair[1]] * m[, pair[2]]
+  col_pairs <- combn(ncol(m), b/2, simplify = FALSE)
+  mpair <- do.call(cbind, lapply(col_pairs, function(cols) {
+    apply(m[, cols], 1, prod)
   }))
+
 
   W_mats<-list()
   pos_ist<-list()
@@ -121,26 +126,58 @@ MOCDs<-function(design){
 
     W_mats <- append(W_mats, list(incd))
   }
-  interproductsum<-list()
-  #indices<-list()
-  for(i in 1:(length(W_mats)-1)){
-    for(j in (i+1):length(W_mats)){
-      AxB<-W_mats[[i]]*W_mats[[j]]
-      intprdsum<-AxB%*%rep(1,ncol(AxB))
-      interproductsum<-append(interproductsum,list(intprdsum,c(i,j)))
-      #indices<-append(indices,)
-    }
-  }
-  new_list1 <- lapply(W_mats, function(W) {
-    list(
-      w = W,
-      row_sum = rowSums(W),
-      col_sum = colSums(W)
-    )
-  })
 
-  new_list<-split(interproductsum,rep(1:(length(interproductsum)/2),each=2))
-  lm<-list("W matrices",new_list1,"Interproduct Sums",new_list)
+  interproductsum <- list()
+
+  k1 <- ncol(m)              # order of m matrix
+  r1 <- k1 / 2                # number of W matrices to combine
+
+  # all combinations of W matrices of size r
+  comb_idx <- combn(length(W_mats), r1)
+
+  for(t in 1:ncol(comb_idx)){
+
+    idx <- comb_idx[, t]
+
+    # multiply all selected W matrices
+    AxB <- Reduce("*", W_mats[idx])
+
+    # row-wise sum
+    intprdsum <- AxB %*% rep(1, ncol(AxB))
+
+    interproductsum <- append(interproductsum,
+                              list(intprdsum, idx))
+  }
+
+  interproductsum <- list()
+
+  for(t in 1:ncol(comb_idx)){
+
+    idx <- comb_idx[, t]
+
+    AxB <- Reduce("*", W_mats[idx])
+
+    intprdsum <- AxB %*% rep(1, ncol(AxB))
+
+    # store as ONE object (not two separate entries)
+    interproductsum[[t]] <- list(
+      sum = intprdsum,
+      idx = idx
+    )
+  }
+
+  total_count <- length(interproductsum)
+  # Each column of mpair corresponds to one W
+  W_sets <- lapply(1:ncol(mpair), function(i) which(mpair[, i] == -1))
+  fixed_index <- 1
+
+  valid_indices <- which(sapply(W_sets, function(x) fixed_index %in% x))
+
+  valid_W <- W_mats[valid_indices]
+
+  length(valid_W)
+  length(W_mats)
+  lm<-list("W matrices",valid_W,"Interproduct Sums",interproductsum,length(valid_W),length(W_mats))
   return(lm)
 }
 

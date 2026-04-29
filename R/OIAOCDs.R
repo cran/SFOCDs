@@ -25,7 +25,9 @@
 #' OIAOCDs(mat)
 #' @export
 OIAOCDs<-function(design){
-design<-as.matrix(design)
+
+  ####incidence matrix
+  design<-as.matrix(design)
 block <- nrow(design)
 trt <- max(design)
 incidence_matrix <- matrix(0, nrow = block, ncol = trt)

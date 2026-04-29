@@ -25,8 +25,10 @@
 #' mat<-matrix(c(1,2,3,4,1,2,4,5,1,3,4,5,2,3,4,5),nrow=4,byrow=TRUE)
 #' HadamardOCDs(mat)
 HadamardOCDs<-function(design){
+
   ####incidence matrix
   design<-as.matrix(design)
+
   block <- nrow(design)
   trt <- max(design)
   #######incidence matrix
